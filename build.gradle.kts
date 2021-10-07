@@ -1,13 +1,17 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    id("io.spring.dependency-management") version "1.0.11.RELEASE"
+    id("org.springframework.boot") version "2.5.5"
     kotlin("jvm") version "1.5.31"
-    application
+    kotlin("plugin.spring") version "1.5.31"
     idea
 }
 
 group = "com.company"
 version = "0.0.1-SNAPSHOT"
+
+java.sourceCompatibility = JavaVersion.VERSION_11
 
 sourceSets {
     create("testIntegration") {
@@ -38,22 +42,46 @@ repositories {
     mavenCentral()
 }
 
+extra["testcontainersVersion"] = "1.16.0"
+extra["javafakerVersion"] = "1.0.2"
+extra["guavaVersion"] = "31.0.1-jre"
+
+dependencyManagement {
+    imports {
+        mavenBom("org.testcontainers:testcontainers-bom:${property("testcontainersVersion")}")
+    }
+}
+
 dependencies {
-    implementation("com.github.javafaker:javafaker:1.0.2")
-    implementation("com.google.guava:guava:31.0.1-jre")
-    testImplementation(kotlin("test"))
-    testImplementation("org.assertj:assertj-core:3.21.0")
-    testImplementation("org.mockito:mockito-core:3.12.4")
-    testIntegrationImplementation("org.testcontainers:postgresql:1.16.0")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("com.github.javafaker:javafaker:${property("javafakerVersion")}")
+    implementation("com.google.guava:guava:${property("guavaVersion")}")
+    implementation("org.flywaydb:flyway-core")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    runtimeOnly("org.postgresql:postgresql")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testIntegrationImplementation("org.testcontainers:junit-jupiter")
+    testIntegrationImplementation("org.testcontainers:postgresql")
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "11"
+    kotlinOptions {
+        freeCompilerArgs = listOf("-Xjsr305=strict")
+        jvmTarget = "11"
+    }
 }
 
 val testIntegration by tasks.registering(Test::class) {
     description = "Runs integration tests."
     group = "verification"
+
+    testClassesDirs = sourceSets["testIntegration"].output.classesDirs
+    classpath = sourceSets["testIntegration"].runtimeClasspath
+
     shouldRunAfter(tasks.test)
 }
 
@@ -63,10 +91,6 @@ tasks.withType<Test> {
 
 tasks.check {
     dependsOn(testIntegration)
-}
-
-application {
-    mainClass.set("com.company.anonymizer.ApplicationKt")
 }
 
 idea {

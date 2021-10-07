@@ -1,0 +1,6 @@
+---
+spring:
+  datasource:
+    url: "jdbc:tc:postgresql:13.4-alpine:///test"
+    username: "test"
+    password: "test"

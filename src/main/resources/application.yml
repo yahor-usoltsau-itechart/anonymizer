@@ -1,0 +1,18 @@
+---
+spring:
+  datasource:
+    url: "${SPRING_DATASOURCE_URL}"
+    username: "${SPRING_DATASOURCE_USERNAME}"
+    password: "${SPRING_DATASOURCE_PASSWORD}"
+server:
+  port: "${SERVER_PORT:8080}"
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "local"
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/anonymizer"
+    username: "anonymizer"
+    password: "anonymizer"
