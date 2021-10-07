@@ -14,6 +14,7 @@ repositories {
 
 dependencies {
     implementation("com.github.javafaker:javafaker:1.0.2")
+    implementation("com.google.guava:guava:31.0.1-jre")
     testImplementation(kotlin("test"))
 }
 
