@@ -4,8 +4,8 @@ import com.google.common.net.InternetDomainName
 import java.net.URI
 
 /**
- * Extracts the Second Level Domain from the given URL.
- * If the given URL has an IP address as a host, returns null.
+ * Extracts the second level domain from the given URI.
+ * If the given URI has an IP address as a host, returns null.
  */
 @Suppress("UnstableApiUsage")
 fun URI.tryExtractSecondLevelDomain(): String? {
@@ -13,8 +13,9 @@ fun URI.tryExtractSecondLevelDomain(): String? {
 }
 
 /**
- * Replaces the Second Level Domain in the given URL keeping userinfo, subdomains and port number.
- * If the given URL has an IP address as a host, returns null.
+ * Replaces the second level domain in the given URI.
+ * Keeps scheme, userinfo, subdomains, port, path, query and fragment untouched.
+ * If the given URI has an IP address as a host, returns null.
  */
 fun URI.tryReplaceSecondLevelDomain(secondLevelDomainReplacement: String): URI? {
     val originalSecondLevelDomain = this.tryExtractSecondLevelDomain() ?: return null
@@ -22,11 +23,12 @@ fun URI.tryReplaceSecondLevelDomain(secondLevelDomainReplacement: String): URI? 
     val authorityReplacement = originalAuthority.reversed().replaceFirst(
         originalSecondLevelDomain.reversed(), secondLevelDomainReplacement.reversed()
     ).reversed()
-    return this.withAuthority(authorityReplacement)
+    return this.replaceAuthority(authorityReplacement)
 }
 
 /**
- * Replaces the host in the given URL keeping userinfo and port number.
+ * Replaces the host in the given URI.
+ * Keeps scheme, userinfo, port, path, query and fragment untouched.
  * Works with both domain names and IP addresses.
  */
 fun URI.replaceHost(hostReplacement: String): URI {
@@ -35,9 +37,14 @@ fun URI.replaceHost(hostReplacement: String): URI {
     val authorityReplacement = originalAuthority.reversed().replaceFirst(
         originalHost.reversed(), hostReplacement.reversed()
     ).reversed()
-    return this.withAuthority(authorityReplacement)
+    return this.replaceAuthority(authorityReplacement)
 }
 
-fun URI.withAuthority(authority: String): URI {
-    return URI(this.scheme, authority, this.path, this.query, this.fragment)
+/**
+ * Replaces the authority (userinfo + host + port) in the given URI.
+ * Keeps scheme, path, query and fragment untouched.
+ * Works with both domain names and IP addresses.
+ */
+fun URI.replaceAuthority(authorityReplacement: String): URI {
+    return URI(this.scheme, authorityReplacement, this.path, this.query, this.fragment)
 }

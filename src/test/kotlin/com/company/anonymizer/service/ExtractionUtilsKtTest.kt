@@ -1,10 +1,7 @@
-package com.company.anonymizer
+package com.company.anonymizer.service
 
-import com.company.anonymizer.service.extractEmails
-import com.company.anonymizer.service.extractIds
-import com.company.anonymizer.service.extractUrls
-import kotlin.test.Test
-import kotlin.test.assertEquals
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 
 internal class ExtractionUtilsKtTest {
 
@@ -28,45 +25,57 @@ internal class ExtractionUtilsKtTest {
         - ID: 34567
         - E-mail: order+34567@yahoo.com
         - URL: https://yahoo.com/orders/34567
+
+        Complex E-mails:
+        - email@sub.example.com
+        - foo.bar@example.com
+        - foo+bar@example.com
+        - foo-bar@example.com
+        - 12345@example.com
         
         Complex URLs:
-        - https://username:password@sub.domain.co.uk:8443/path?foo=bar#fragment
         - https://username:password@1.1.1.1:8443/path?foo=bar#fragment
+        - https://username:password@sub.example.co.uk:8443/path?foo=bar#fragment
     """.trimIndent()
 
     @Test
-    fun testExtractUrls() {
+    fun `Should extract URLs from text`() {
         val expectedUrls = setOf(
             "https://att.net/users/foo",
             "https://www.att.net/users/foo",
             "https://hotmail.com/users/bar",
             "https://yahoo.com/orders/34567",
             "https://username:password@1.1.1.1:8443/path?foo=bar#fragment",
-            "https://username:password@sub.domain.co.uk:8443/path?foo=bar#fragment",
+            "https://username:password@sub.example.co.uk:8443/path?foo=bar#fragment",
         )
 
         val actualUrls = extractUrls(inputText)
 
-        assertEquals(expectedUrls, actualUrls)
+        assertThat(actualUrls).containsAll(expectedUrls)
     }
 
     @Test
-    fun testExtractEmails() {
+    fun `Should extract E-mails from text`() {
         val expectedEmails = setOf(
             "foo@msn.com",
             "foo@msn.com",
             "bar@hotmail.com",
             "order+34567@yahoo.com",
-            "password@sub.domain.co.uk", // this is part of the authority of the last URL
+            "email@sub.example.com",
+            "foo.bar@example.com",
+            "foo+bar@example.com",
+            "foo-bar@example.com",
+            "12345@example.com",
+            "password@sub.example.co.uk", // this is part of the authority of the last URL
         )
 
         val actualEmails = extractEmails(inputText)
 
-        assertEquals(expectedEmails, actualEmails)
+        assertThat(actualEmails).containsAll(expectedEmails)
     }
 
     @Test
-    fun testExtractIds() {
+    fun `Should extract IDs from text`() {
         val expectedIds = setOf(
             "12345",
             "23456",
@@ -76,7 +85,7 @@ internal class ExtractionUtilsKtTest {
 
         val actualIds = extractIds(inputText)
 
-        assertEquals(expectedIds, actualIds)
+        assertThat(actualIds).containsAll(expectedIds)
     }
 
 }

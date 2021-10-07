@@ -16,6 +16,8 @@ dependencies {
     implementation("com.github.javafaker:javafaker:1.0.2")
     implementation("com.google.guava:guava:31.0.1-jre")
     testImplementation(kotlin("test"))
+    testImplementation("org.assertj:assertj-core:3.21.0")
+    testImplementation("org.mockito:mockito-core:3.12.4")
 }
 
 tasks.test {
