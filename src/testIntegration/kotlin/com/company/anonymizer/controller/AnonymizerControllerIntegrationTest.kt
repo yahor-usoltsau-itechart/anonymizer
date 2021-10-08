@@ -1,26 +1,13 @@
-package com.company.anonymizer
+package com.company.anonymizer.controller
 
-import com.company.anonymizer.controller.TextModel
-import com.company.anonymizer.service.Generator
-import com.fasterxml.jackson.databind.ObjectMapper
-import org.hamcrest.Matchers.equalTo
-import org.junit.jupiter.api.BeforeEach
+import com.company.anonymizer.IntegrationTest
+import org.hamcrest.Matchers
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.`when`
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
+import org.mockito.Mockito
 import org.springframework.http.MediaType
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-class ApplicationTests {
+class AnonymizerControllerIntegrationTest : IntegrationTest() {
 
     private val originalId = "12345"
     private val anonymizedId = "98765"
@@ -66,28 +53,11 @@ class ApplicationTests {
         - https://username:password@$anonymizedIp:8443/path?foo=bar#fragment
     """.trimIndent()
 
-    @Autowired
-    private lateinit var jdbc: NamedParameterJdbcOperations
-
-    @MockBean
-    private lateinit var generator: Generator
-
-    @Autowired
-    private lateinit var mockMvc: MockMvc
-
-    @Autowired
-    private lateinit var objectMapper: ObjectMapper
-
-    @BeforeEach
-    fun beforeEach() {
-        jdbc.update("delete from replacements", emptyMap<String, Any>())
-    }
-
     @Test
     fun `Should anonymize text via API`() {
-        `when`(generator.generateDomain()).thenReturn(anonymizedDomain, anonymizedIp)
-        `when`(generator.generateEmail()).thenReturn(anonymizedEmail)
-        `when`(generator.generateId()).thenReturn(anonymizedId)
+        Mockito.`when`(generator.generateDomain()).thenReturn(anonymizedDomain, anonymizedIp)
+        Mockito.`when`(generator.generateEmail()).thenReturn(anonymizedEmail)
+        Mockito.`when`(generator.generateId()).thenReturn(anonymizedId)
 
         mockMvc.post("/anonymize") {
             contentType = MediaType.APPLICATION_JSON
@@ -95,7 +65,7 @@ class ApplicationTests {
         }.andExpect {
             status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
-            content { jsonPath("$.text", equalTo(expectedText)) }
+            content { jsonPath("$.text", Matchers.equalTo(expectedText)) }
         }
     }
 
