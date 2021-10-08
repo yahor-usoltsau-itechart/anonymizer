@@ -1,10 +1,8 @@
 package com.company.anonymizer.repository
 
-import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Repository
 
 @Repository
-@Primary // TODO
 class InMemoryReplacementRepository : ReplacementRepository {
 
     private val domainReplacements = mutableMapOf<String, String>()
@@ -14,19 +12,19 @@ class InMemoryReplacementRepository : ReplacementRepository {
     private val idReplacements = mutableMapOf<String, String>()
 
     override fun getOrCreateDomainReplacement(originalDomain: String, replacementSupplier: () -> String): String {
-        return domainReplacements.compute(originalDomain) { _, anonymizedDomain ->
+        return domainReplacements.compute(originalDomain.lowercase()) { _, anonymizedDomain ->
             anonymizedDomain ?: replacementSupplier()
         }!!
     }
 
     override fun getOrCreateEmailReplacement(originalEmail: String, replacementSupplier: () -> String): String {
-        return emailReplacements.compute(originalEmail) { _, anonymizedEmail ->
+        return emailReplacements.compute(originalEmail.lowercase()) { _, anonymizedEmail ->
             anonymizedEmail ?: replacementSupplier()
         }!!
     }
 
     override fun getOrCreateIdReplacement(originalId: String, replacementSupplier: () -> String): String {
-        return idReplacements.compute(originalId) { _, anonymizedId ->
+        return idReplacements.compute(originalId.lowercase()) { _, anonymizedId ->
             anonymizedId ?: replacementSupplier()
         }!!
     }

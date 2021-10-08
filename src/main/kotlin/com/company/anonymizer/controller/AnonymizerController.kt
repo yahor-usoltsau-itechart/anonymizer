@@ -13,7 +13,7 @@ class AnonymizerController(private val anonymizerFactory: ObjectFactory<Anonymiz
 
     @PostMapping("/anonymize")
     fun anonymize(@Valid @RequestBody request: TextModel): TextModel {
-        return TextModel(anonymizerFactory.`object`.anonymize(request.text))
+        return TextModel(anonymizerFactory.getObject().anonymize(request.text))
     }
 
 }
