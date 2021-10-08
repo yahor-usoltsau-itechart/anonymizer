@@ -1,6 +1,7 @@
 # Anonymizer
 
-An anonymization service which takes a text as an input and replaces all occurrences of URLs, IDs and E-mails with fake data.
+An anonymization service which takes a text as an input and replaces all occurrences of URLs, IDs and E-mails with fake
+data.
 
 - URL - any valid URL but need to only replace the second level domain
 - E-mail - any valid email address

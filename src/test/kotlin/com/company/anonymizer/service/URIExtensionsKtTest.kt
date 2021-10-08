@@ -6,7 +6,7 @@ import java.net.URI
 
 internal class URIExtensionsKtTest {
 
-    private val generator = RandomGenerator()
+    private val generator = Generator()
 
     @Test
     fun `Should extract second level domain from URI`() {

@@ -1,13 +1,13 @@
 package com.company.anonymizer.repository
 
-import com.company.anonymizer.service.RandomGenerator
+import com.company.anonymizer.service.Generator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class InMemoryReplacementRepositoryTest {
 
-    private val generator = RandomGenerator()
+    private val generator = Generator()
 
     private lateinit var repository: ReplacementRepository
 

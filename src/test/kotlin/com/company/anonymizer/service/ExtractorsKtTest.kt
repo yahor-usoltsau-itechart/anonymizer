@@ -3,7 +3,7 @@ package com.company.anonymizer.service
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class ExtractionUtilsKtTest {
+internal class ExtractorsKtTest {
 
     private val inputText = """
         Test data:

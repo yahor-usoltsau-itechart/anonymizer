@@ -1,12 +1,13 @@
 package com.company.anonymizer.repository
 
+import com.company.anonymizer.repository.ReplacementType.*
 import org.springframework.context.annotation.Primary
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
 import org.springframework.stereotype.Repository
 
 @Primary
 @Repository
-class JdbcReplacementRepositoryAdapter(private val jdbc: NamedParameterJdbcOperations) : ReplacementRepository {
+class JdbcReplacementRepository(private val jdbc: NamedParameterJdbcOperations) : ReplacementRepository {
 
     private val getOrCreateQuery = /* language=PostgreSQL */ """
         insert into replacements as r (type, source, target)
@@ -17,17 +18,17 @@ class JdbcReplacementRepositoryAdapter(private val jdbc: NamedParameterJdbcOpera
     """.trimIndent()
 
     override fun getOrCreateDomainReplacement(originalDomain: String, replacementSupplier: () -> String): String {
-        val params = buildParams(ReplacementType.DOMAIN, originalDomain, replacementSupplier())
+        val params = buildParams(DOMAIN, originalDomain, replacementSupplier())
         return jdbc.queryForObject(getOrCreateQuery, params, String::class.java)!!
     }
 
     override fun getOrCreateEmailReplacement(originalEmail: String, replacementSupplier: () -> String): String {
-        val params = buildParams(ReplacementType.EMAIL, originalEmail, replacementSupplier())
+        val params = buildParams(EMAIL, originalEmail, replacementSupplier())
         return jdbc.queryForObject(getOrCreateQuery, params, String::class.java)!!
     }
 
     override fun getOrCreateIdReplacement(originalId: String, replacementSupplier: () -> String): String {
-        val params = buildParams(ReplacementType.ID, originalId, replacementSupplier())
+        val params = buildParams(ID, originalId, replacementSupplier())
         return jdbc.queryForObject(getOrCreateQuery, params, String::class.java)!!
     }
 
@@ -39,7 +40,7 @@ class JdbcReplacementRepositoryAdapter(private val jdbc: NamedParameterJdbcOpera
 
 }
 
-enum class ReplacementType {
+private enum class ReplacementType {
     DOMAIN,
     EMAIL,
     ID,
