@@ -1,3 +1,4 @@
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -5,6 +6,7 @@ plugins {
     id("org.springframework.boot") version "2.5.5"
     kotlin("jvm") version "1.5.31"
     kotlin("plugin.spring") version "1.5.31"
+    jacoco
     idea
 }
 
@@ -78,19 +80,29 @@ tasks.withType<KotlinCompile> {
 val testIntegration by tasks.registering(Test::class) {
     description = "Runs integration tests."
     group = "verification"
-
     testClassesDirs = sourceSets["testIntegration"].output.classesDirs
     classpath = sourceSets["testIntegration"].runtimeClasspath
-
     shouldRunAfter(tasks.test)
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
 }
 
 tasks.check {
     dependsOn(testIntegration)
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+    testLogging {
+        showStandardStreams = true
+        events = setOf(TestLogEvent.FAILED, TestLogEvent.STANDARD_OUT, TestLogEvent.STANDARD_ERROR)
+    }
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    executionData(fileTree(buildDir).include("jacoco/*.exec"))
+    reports {
+        csv.required.set(true)
+    }
 }
 
 idea {

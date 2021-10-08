@@ -1,5 +1,8 @@
 # Anonymizer
 
+[![Build](https://github.com/yahor-usoltsau-itechart/anonymizer/actions/workflows/build.yml/badge.svg)](https://github.com/yahor-usoltsau-itechart/anonymizer/actions/workflows/build.yml)
+[![Coverage](.github/badges/jacoco.svg)](https://github.com/yahor-usoltsau-itechart/anonymizer/actions/workflows/build.yml)
+
 An anonymization service which takes a text as an input and replaces all occurrences of URLs, IDs and E-mails with fake
 data.
 
