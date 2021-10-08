@@ -1,10 +1,9 @@
 package com.company.anonymizer.service
 
 import com.company.anonymizer.repository.ReplacementRepository
-import org.springframework.beans.factory.config.ConfigurableBeanFactory
-import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.context.annotation.RequestScope
 import java.net.URI
 
 /**
@@ -20,11 +19,8 @@ import java.net.URI
  * @see replaceHost to understand how URLs with IP-addresses in host are processed
  */
 @Service
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-class Anonymizer(
-    private val generator: Generator,
-    private val replacementRepository: ReplacementRepository,
-) {
+@RequestScope
+class Anonymizer(private val generator: Generator, private val replacementRepository: ReplacementRepository) {
 
     private val replacements = mutableListOf<String>()
 
